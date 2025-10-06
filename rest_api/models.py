@@ -1,0 +1,46 @@
+from django.db import models
+
+
+class Order(models.Model):
+    id = models.BigAutoField(primary_key=True)  # BIGSERIAL (PK)
+    user_id = models.BigIntegerField()          # NOT NULL
+    created_at = models.DateTimeField(auto_now_add=True)  # DEFAULT now()
+    is_approved = models.BooleanField(default=False)      # DEFAULT FALSE
+
+    # MD faylda: shopcart_item_connection BIGINT NOT NULL (external reference)
+    # Əgər başqa servisdəki/tabloda id tutursansa ForeignKey əvəzinə BigIntegerField saxlayırıq:
+    shopcart_item_connection = models.BigIntegerField()
+
+    class Meta:
+        db_table = "orders"
+        indexes = [
+            models.Index(fields=["user_id"]),
+        ]
+
+    def __str__(self):
+        return f"Order#{self.pk} (user={self.user_id})"
+
+
+class OrderItem(models.Model):
+    id = models.BigAutoField(primary_key=True)  # BIGSERIAL (PK)
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="items",
+        db_column="order_id",
+    )  # NOT NULL REFERENCES orders(id)
+
+    status = models.SmallIntegerField(default=0)         # SMALLINT NOT NULL DEFAULT 0
+    quantity = models.IntegerField(default=1)            # INT NOT NULL DEFAULT 1
+    product_variation = models.BigIntegerField()         # BIGINT NOT NULL
+    price = models.BigIntegerField()                     # BIGINT NOT NULL (kuru x100 saxla: qepik)
+
+    class Meta:
+        db_table = "order_items"
+        indexes = [
+            models.Index(fields=["order"]),
+            models.Index(fields=["status"]),
+        ]
+
+    def __str__(self):
+        return f"OrderItem#{self.pk} of Order#{self.order_id}"
