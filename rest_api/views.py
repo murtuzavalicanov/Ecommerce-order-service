@@ -112,15 +112,21 @@ def create_order_from_shopcart(request):
 
     return Response({"message": "Order and items created successfully"}, status=status.HTTP_201_CREATED)
 
-    
+@api_view(['POST'])
+def update_order_item_status(self, request, pk):
+    try:
+        order_item = OrderItem.objects.get(pk=pk)
+    except OrderItem.DoesNotExist:
+        return Response({"error": "OrderItem not found"}, status=status.HTTP_404_NOT_FOUND)
 
-# class OrderViewSet(viewsets.ModelViewSet):
-#     queryset = Order.objects.all().order_by("-id")
-#     serializer_class = OrderSerializer
-#     permission_classes = [AllowAny]
+    new_status = request.data.get("status")
+    if new_status not in dict(OrderItem.Status.choices):
+        return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
 
+    order_item.status = new_status
+    order_item.save()
 
-# class OrderItemViewSet(viewsets.ModelViewSet):
-#     queryset = OrderItem.objects.select_related("order").all().order_by("-id")
-#     serializer_class = OrderItemSerializer
-#     permission_classes = [AllowAny]
+    order_item.order.check_and_approve()
+
+    serializer = OrderItemSerializer(order_item)
+    return Response(serializer.data, status=status.HTTP_200_OK)

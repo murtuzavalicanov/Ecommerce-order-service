@@ -7,7 +7,12 @@ class Order(models.Model):
     is_approved = models.BooleanField(default=False)      # DEFAULT FALSE
 
     # Əgər başqa servisdəki/tabloda id tutursansa ForeignKey əvəzinə BigIntegerField saxlayırıq:
-    
+  
+    def check_and_approve(self):
+        items = self.orderitem_set.all()
+        if items.exists() and all(item.status in [1, 4] for item in items):
+            self.is_approved = True
+            self.save()
 
     class Meta:
         db_table = "orders"
@@ -28,7 +33,13 @@ class OrderItem(models.Model):
         db_column="order_id",
     )  # NOT NULL REFERENCES orders(id)
 
-    status = models.SmallIntegerField(default=0)         # SMALLINT NOT NULL DEFAULT 0
+    class Status(models.IntegerChoices):
+        PROCESSING = 1, 'Processing'
+        SHIPPED = 2, 'Shipped'
+        DELIVERED = 3, 'Delivered'
+        CANCELLED = 4, 'Cancelled'
+
+    status = models.IntegerField(choices=Status.choices, default=Status.PROCESSING)
     quantity = models.IntegerField(default=1)            # INT NOT NULL DEFAULT 1
     product_variation = models.BigIntegerField()         # BIGINT NOT NULL
     price = models.BigIntegerField()                     # BIGINT NOT NULL (kuru x100 saxla: qepik)
