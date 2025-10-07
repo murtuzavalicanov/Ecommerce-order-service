@@ -6,7 +6,6 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # DEFAULT now()
     is_approved = models.BooleanField(default=False)      # DEFAULT FALSE
 
-    # MD faylda: shopcart_item_connection BIGINT NOT NULL (external reference)
     # Əgər başqa servisdəki/tabloda id tutursansa ForeignKey əvəzinə BigIntegerField saxlayırıq:
     
 
@@ -33,7 +32,6 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(default=1)            # INT NOT NULL DEFAULT 1
     product_variation = models.BigIntegerField()         # BIGINT NOT NULL
     price = models.BigIntegerField()                     # BIGINT NOT NULL (kuru x100 saxla: qepik)
-    shopcart_item_connection = models.BigIntegerField()
 
     class Meta:
         db_table = "order_items"
@@ -44,7 +42,4 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"OrderItem#{self.pk} of Order#{self.order_id}"
-    
-
-    
     

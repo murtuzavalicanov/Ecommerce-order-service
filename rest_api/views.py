@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 
 
-#Order
+#Order Create
 @api_view(['GET', 'POST'])
 def orders_list_create(request):
     if request.method == 'GET':
@@ -92,7 +92,7 @@ def orderitems_detail(request, pk):
 @api_view(['POST'])
 def create_order_from_shopcart(request):
     data = request.data
-    shopcart_items = data.pop('shopcart_items', [])
+    items = data.pop('items', [])
 
         # 1️⃣ Order yarat
     order_serializer = OrderSerializer(data=data)
@@ -102,7 +102,7 @@ def create_order_from_shopcart(request):
         return Response(order_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 2️⃣ OrderItem-ları yarat
-    for item in shopcart_items:
+    for item in items:
         item['order'] = order.id  # ForeignKey-a order.id əlavə et
         item_serializer = OrderItemSerializer(data=item)
         if item_serializer.is_valid():

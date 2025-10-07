@@ -6,8 +6,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = [
-            "id", "order", "status", "quantity",
-            "product_variation", "price"
+            "id", 
+            "order", 
+            "status", 
+            "quantity",
+            "product_variation", 
+            "price"
         ]
         read_only_fields = ["id"]
 
@@ -18,7 +22,10 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            "id", "user_id", "created_at", "is_approved",
-            "shopcart_item_connection", "items"
+            "id", 
+            "user_id", 
+            "created_at", 
+            "is_approved",
+            "items"
         ]
         read_only_fields = ["id", "created_at"]
