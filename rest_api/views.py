@@ -112,7 +112,7 @@ def create_order_from_shopcart(request):
 
     return Response({"message": "Order and items created successfully"}, status=status.HTTP_201_CREATED)
 
-@api_view(['POST'])
+@api_view(['PATCH'])
 def update_order_item_status(request, pk):
     try:
         item = OrderItem.objects.get(pk=pk)
