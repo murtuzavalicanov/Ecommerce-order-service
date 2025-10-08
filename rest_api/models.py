@@ -9,8 +9,8 @@ class Order(models.Model):
     # Əgər başqa servisdəki/tabloda id tutursansa ForeignKey əvəzinə BigIntegerField saxlayırıq:
   
     def check_and_approve(self):
-        items = self.orderitem_set.all()
-        if items.exists() and all(item.status in [1, 4] for item in items):
+        items = self.items.all()
+        if items.exists() and all(item.status in [3, 4] for item in items):
             self.is_approved = True
             self.save()
 
