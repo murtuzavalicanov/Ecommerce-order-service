@@ -1,4 +1,5 @@
-FROM python:3.12.2-alpine3.19
+FROM python:3.12.2
+#-alpine3.19
 LABEL maintainer="Murtuza Valijanov"
 
 # prevent Python from writing .pyc files
